@@ -21,12 +21,10 @@ with BuildPart() as ts:
     extrude(amount=ts_height)
     # handle support
     with BuildSketch() as sk1:
-        Circle((ts_outer_dia + ts_handle_support_offset) / 2)
-        Circle(ts_inner_dia / 2, mode=Mode.SUBTRACT)
-        Rectangle(ts_outer_dia + ts_handle_support_offset, 
+        Rectangle(ts_outer_dia / 2 + ts_handle_support_offset, 
                   handle_dia + ts_handle_support_offset, 
-                  mode=Mode.INTERSECT,
                   align=(Align.MIN, Align.CENTER))
+        Circle(ts_inner_dia / 2, mode=Mode.SUBTRACT)
     extrude(amount=handle_center_height)
     # portafilter wings
     with BuildSketch(ts.faces().sort_by(Axis.Z)[-1]):
@@ -41,3 +39,5 @@ with BuildPart() as ts:
     fillet(ts.edges().filter_by_position(Axis.Z,minimum=ts_height - ear_nut_depth, maximum=ts_height), radius=1)
 
 show(ts)
+
+ts.part.export_step("tamping-station.step")
