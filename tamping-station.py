@@ -10,6 +10,8 @@ wing_nut_depth = 7.5
 handle_dia = 18.0
 handle_z_offset = 31.0
 
+handle_center_height = ts_height - wing_nut_depth - handle_z_offset + handle_dia/2
+
 with BuildPart() as ts:
     with BuildSketch() as sk1:
         Circle(ts_outer_dia / 2)
@@ -19,9 +21,8 @@ with BuildPart() as ts:
         Rectangle(ts_outer_dia, wing_width)
     extrude(amount=-wing_nut_depth, mode=Mode.SUBTRACT)
     with BuildSketch(Plane.XZ):
-        with Locations((0,ts_height - wing_nut_depth - handle_z_offset)):
-            Circle(handle_dia/2, align=(Align.CENTER, Align.MIN))
-        with Locations((0,ts_height - wing_nut_depth - handle_z_offset + handle_dia/2)):
+        with Locations((0,handle_center_height)):
+            Circle(handle_dia/2)
             Rectangle(handle_dia, ts_height, align=(Align.CENTER, Align.MIN))
     extrude(amount=ts_outer_dia, mode=Mode.SUBTRACT)
 
