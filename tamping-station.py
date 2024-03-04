@@ -6,12 +6,12 @@ ts_inner_dia = 75.0
 ts_outer_dia = 85.0
 ts_handle_support_offset = ts_outer_dia - ts_inner_dia
 ts_height = 79.0
-wing_width = 28.0
-wing_nut_depth = 7.5
+ear_width = 28.0
+ear_nut_depth = 7.5
 handle_dia = 18.0
 handle_z_offset = 31.0
 
-handle_center_height = ts_height - wing_nut_depth - handle_z_offset + handle_dia/2
+handle_center_height = ts_height - ear_nut_depth - handle_z_offset + handle_dia/2
 
 with BuildPart() as ts:
     # main body
@@ -19,6 +19,7 @@ with BuildPart() as ts:
         Circle(ts_outer_dia / 2)
         Circle(ts_inner_dia / 2, mode=Mode.SUBTRACT)
     extrude(amount=ts_height)
+    # handle support
     with BuildSketch() as sk1:
         Circle((ts_outer_dia + ts_handle_support_offset) / 2)
         Circle(ts_inner_dia / 2, mode=Mode.SUBTRACT)
@@ -27,9 +28,10 @@ with BuildPart() as ts:
                   mode=Mode.INTERSECT,
                   align=(Align.MIN, Align.CENTER))
     extrude(amount=handle_center_height)
+    # portafilter wings
     with BuildSketch(ts.faces().sort_by(Axis.Z)[-1]):
-        Rectangle(wing_width, ts_outer_dia)
-    extrude(amount=-wing_nut_depth, mode=Mode.SUBTRACT)
+        Rectangle(ear_width, ts_outer_dia)
+    extrude(amount=-ear_nut_depth, mode=Mode.SUBTRACT)
     with BuildSketch(Plane.YZ):
         with Locations((0,handle_center_height)):
             Circle(handle_dia/2)
