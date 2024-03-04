@@ -18,9 +18,9 @@ with BuildPart() as ts:
         Circle(ts_inner_dia / 2, mode=Mode.SUBTRACT)
     extrude(amount=ts_height)
     with BuildSketch(ts.faces().sort_by(Axis.Z)[-1]):
-        Rectangle(ts_outer_dia, wing_width)
+        Rectangle(wing_width, ts_outer_dia)
     extrude(amount=-wing_nut_depth, mode=Mode.SUBTRACT)
-    with BuildSketch(Plane.XZ):
+    with BuildSketch(Plane.YZ):
         with Locations((0,handle_center_height)):
             Circle(handle_dia/2)
             Rectangle(handle_dia, ts_height, align=(Align.CENTER, Align.MIN))
