@@ -36,7 +36,8 @@ with BuildPart() as ts:
             Circle(handle_dia/2)
             Rectangle(handle_dia, ts_height, align=(Align.CENTER, Align.MIN))
     extrude(amount=ts_outer_dia, mode=Mode.SUBTRACT)
-    fillet(ts.edges().filter_by_position(Axis.Z,minimum=ts_height - ear_nut_depth, maximum=ts_height), radius=1)
+    chamfer(ts.edges().filter_by_position(Axis.Z,minimum=ts_height - ear_nut_depth - 20, maximum=ts_height), length=1)
+    fillet(ts.edges().filter_by_position(Axis.Z,minimum=1, maximum=handle_center_height-1).filter_by(Axis.Z), radius=5)
 
 show(ts)
 
