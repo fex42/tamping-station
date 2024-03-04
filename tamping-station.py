@@ -32,11 +32,12 @@ with BuildPart() as ts:
     with BuildSketch(ts.faces().sort_by(Axis.Z)[-1]):
         Rectangle(ear_width, ts_outer_dia)
     extrude(amount=-ear_nut_depth, mode=Mode.SUBTRACT)
+    # slot for the handle
     with BuildSketch(Plane.YZ):
         with Locations((0,handle_center_height)):
             Circle(handle_dia/2)
             Rectangle(handle_dia, ts_height, align=(Align.CENTER, Align.MIN))
     extrude(amount=ts_outer_dia, mode=Mode.SUBTRACT)
-
+    fillet(ts.edges().filter_by_position(Axis.Z,minimum=ts_height - ear_nut_depth, maximum=ts_height), radius=1)
 
 show(ts)
