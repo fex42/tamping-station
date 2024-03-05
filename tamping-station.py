@@ -19,9 +19,10 @@ with BuildPart() as ts:
         Circle(ts_outer_dia / 2)
         Circle(ts_inner_dia / 2, mode=Mode.SUBTRACT)
     extrude(amount=ts_height)
+
     # handle support
     with BuildSketch() as hs_sk:
-        r = handle_support_offset / 2
+        r = 7.5 # handle_support_offset / 2
         x = ts_outer_dia/2 + handle_support_offset - r
         y = handle_dia/2
         oc = Circle(ts_outer_dia/2)
@@ -30,26 +31,35 @@ with BuildPart() as ts:
         make_hull(hs_sk.edges())
         Circle(ts_inner_dia / 2, mode=Mode.SUBTRACT)
     extrude(amount=ts_height)
+
     # portafilter wings
     if (ear_nut_depth > 0.0):
         with BuildSketch(ts.faces().sort_by(Axis.Z)[-1]):
             Rectangle(ear_width, ts_outer_dia)
         extrude(amount=-ear_nut_depth, mode=Mode.SUBTRACT)
-    #chamfer the handle support
+
+    # chamfer the handle support
     with BuildSketch(Plane.XZ) as hs_sk:
         with BuildLine():
-            l1 = Line((ts_outer_dia/2, ts_height), (ts_outer_dia/2, ts_height-11.229))
-            l2 = PolarLine(l1@1, 15.35, -45.0)
-            l3 = Line(l2 @ 1, ((l2 @ 1).X, ts_height))
+            top_w = 8.0
+            len = 9.1895
+            l1 = Line((ts_outer_dia/2, ts_height), (ts_outer_dia/2, ts_height-top_w))
+            l1b = JernArc(l1@1, l1%1, r, arc_size=45)
+            l2 = PolarLine(l1b@1, len, -45.0)
+            l2b = JernArc(l2@1, l2%1, r, arc_size=-45)
+            l3 = Line(l2b @ 1, ((l2b @ 1).X, ts_height))
             l4 = Line(l3@1, l1@0)
         make_face()
     revolve(axis=Axis.Z, mode=Mode.SUBTRACT)
+
     # slot for the handle
-    with BuildSketch(Plane.YZ):
-        with Locations((0,handle_center_height)):
-            Circle(handle_dia/2)
-            Rectangle(handle_dia, ts_height, align=(Align.CENTER, Align.MIN))
-    extrude(amount=ts_outer_dia, mode=Mode.SUBTRACT)
+    if True:
+        with BuildSketch(Plane.YZ):
+            with Locations((0,handle_center_height)):
+                Circle(handle_dia/2)
+                Rectangle(handle_dia, ts_height, align=(Align.CENTER, Align.MIN))
+        extrude(amount=ts_outer_dia, mode=Mode.SUBTRACT)
+    
  #   chamfer(ts.edges().filter_by_position(Axis.Z,minimum=ts_height - ear_nut_depth - 20, maximum=ts_height), length=1)
  #   fillet(ts.edges().filter_by_position(Axis.Z,minimum=1, maximum=handle_center_height-1).filter_by(Axis.Z), radius=5)
 
