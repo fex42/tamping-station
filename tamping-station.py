@@ -43,7 +43,7 @@ with BuildPart() as ts:
     # chamfer the handle support
     with BuildSketch(Plane.XZ) as hs2_sk:
         with BuildLine():
-            top_w = 11.0
+            top_w = 13.0
             len = 15.0
             l1 = Line((ts_outer_dia/2, ts_height), (ts_outer_dia/2, ts_height-top_w))
             l1b = JernArc(l1@1, l1%1, r, arc_size=45)
@@ -61,13 +61,20 @@ with BuildPart() as ts:
                 Rectangle(handle_dia, ts_height, align=(Align.CENTER, Align.MIN))
         extrude(amount=ts_outer_dia, mode=Mode.SUBTRACT)
 
-    egs = ts.edges().filter_by(GeomType.HYPERBOLA) + ts.edges().filter_by(GeomType.BSPLINE)
-    egs_l = egs.filter_by_position(Axis.Y, minimum=-ts_inner_dia/2, maximum=-handle_dia/2-1.0)
-    egs_r = egs.filter_by_position(Axis.Y, minimum=handle_dia/2+.1, maximum=ts_inner_dia/2)
+    sel = ts.edges().filter_by(GeomType.HYPERBOLA) + ts.edges().filter_by(GeomType.BSPLINE)
+    sel1 = sel.filter_by_position(Axis.Y, minimum=-ts_inner_dia/2, maximum=-handle_dia/2-1.0) + sel.filter_by_position(Axis.Y, minimum=handle_dia/2+.1, maximum=ts_inner_dia/2)
 
-    fillet(egs_l, radius=5.0)
-    fillet(egs_r, radius=5.0)
 
-show(ts, egs_l, egs_r)
+    sel2 = ts.edges().filter_by_position(Axis.Y,
+                                         minimum=-handle_dia/2,
+                                         maximum=handle_dia/2
+                                         ).filter_by_position(Axis.Z,
+                                                              minimum=ts_height/2,
+                                                              maximum=ts_height
+                                                              ) 
+    fillet(sel1, radius=5.5)
+    fillet(sel2, radius=0.6)
+
+show(ts)
 
 ts.part.export_step("tamping-station.step")
