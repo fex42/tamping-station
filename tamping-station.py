@@ -14,11 +14,11 @@ from build123d import *
 ts_inner_dia = 75.0
 ts_outer_dia = 85.0
 handle_support_offset = 9.0
-ts_height = 79.0
+ts_height = 75.0
 ear_width = 28.0
 ear_nut_depth = 0.0
 handle_dia = 18.0
-handle_z_offset = 31.0
+handle_z_offset = 33.0
 
 handle_center_height = ts_height - ear_nut_depth - handle_z_offset + handle_dia / 2
 
@@ -78,14 +78,14 @@ with BuildPart() as ts:
     ) + sel.filter_by_position(
         Axis.Y, minimum=handle_dia / 2 + 0.1, maximum=ts_inner_dia / 2
     )
-    fillet(sel1, radius=5.5)
+    fillet(sel1, radius=4.7)
 
     sel2 = (
         ts.edges()
         .filter_by_position(Axis.Y, minimum=-handle_dia / 2, maximum=handle_dia / 2)
         .filter_by_position(Axis.Z, minimum=ts_height / 2, maximum=ts_height-1)
     )
-    fillet(sel2, radius=2.0)
+    fillet(sel2, radius=1.3)
 
     sel3 = (
         ts.edges()
