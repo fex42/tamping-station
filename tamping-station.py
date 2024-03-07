@@ -78,14 +78,26 @@ with BuildPart() as ts:
     ) + sel.filter_by_position(
         Axis.Y, minimum=handle_dia / 2 + 0.1, maximum=ts_inner_dia / 2
     )
+    fillet(sel1, radius=5.5)
 
     sel2 = (
         ts.edges()
         .filter_by_position(Axis.Y, minimum=-handle_dia / 2, maximum=handle_dia / 2)
-        .filter_by_position(Axis.Z, minimum=ts_height / 2, maximum=ts_height)
+        .filter_by_position(Axis.Z, minimum=ts_height / 2, maximum=ts_height-1)
     )
-    fillet(sel1, radius=5.5)
-    fillet(sel2, radius=0.6)
+    fillet(sel2, radius=2.0)
+
+    sel3 = (
+        ts.edges()
+        .filter_by_position(Axis.Z, minimum=ts_height, maximum=ts_height)
+    )
+    fillet(sel3, radius=1.0)
+
+    sel4 = (
+        ts.edges()
+        .filter_by_position(Axis.Z, minimum=0, maximum=0)
+    )
+    chamfer(sel4, length=0.6)
 
 show(ts)
 
