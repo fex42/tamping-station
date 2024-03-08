@@ -9,7 +9,7 @@ handle_dia = 18.0
 handle_z_offset = 33.0
 
 with BuildPart() as ts:
-    # handle support
+    # main body
     with BuildSketch() as hs_sk:
         x = ts_outer_dia / 2 - 2.0
         y = handle_dia / 2
@@ -41,6 +41,7 @@ with BuildPart() as ts:
                       align=(Align.CENTER, Align.MIN))
     extrude(amount=ts_outer_dia, mode=Mode.SUBTRACT)
 
+    # now do some fillets
     sel = (ts.edges().filter_by(GeomType.HYPERBOLA) +
            ts.edges().filter_by(GeomType.BSPLINE))
 
