@@ -102,3 +102,4 @@ with BuildPart() as ts:
 show(ts)
 
 ts.part.export_step("tamping-station.step")
+ts.part.export_stl("tamping-station.stl")
