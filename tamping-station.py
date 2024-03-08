@@ -51,7 +51,7 @@ with BuildPart() as ts:
     
     sel2 = sel.filter_by_position(Axis.Y,
                                   minimum=handle_dia / 2 + 1.0,
-                                  maximum=ts_inner_dia / 2)
+                                  maximum=ts_inner_dia / 2).sort_by(Axis.Z, reverse=True)
     fillet(sel1, radius=5.4)
 #    fillet(sel2, radius=5.0)
 
