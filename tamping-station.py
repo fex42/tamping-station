@@ -6,7 +6,6 @@ ts_inner_dia = 75.0
 ts_outer_dia = 85.0
 ts_height = 75.0
 handle_dia = 18.0
-handle_z_offset = 33.0
 
 with BuildPart() as ts:
     # main body
@@ -34,7 +33,7 @@ with BuildPart() as ts:
 
     # slot for the handle
     with BuildSketch(Plane.YZ):
-        with Locations((0, ts_height - handle_z_offset + handle_dia / 2)):
+        with Locations((0, ts_height - 33.0 + handle_dia / 2)):
             Circle(handle_dia / 2)
             Rectangle(handle_dia, 
                       ts_height, 
@@ -51,7 +50,7 @@ with BuildPart() as ts:
     
     sel2 = sel.filter_by_position(Axis.Y,
                                   minimum=handle_dia / 2 + 1.0,
-                                  maximum=ts_inner_dia / 2).sort_by(Axis.Z, reverse=True)
+                                  maximum=ts_inner_dia / 2)
     fillet(sel1, radius=5.4)
 #    fillet(sel2, radius=5.0)
 
