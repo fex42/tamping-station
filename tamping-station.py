@@ -44,14 +44,17 @@ with BuildPart() as ts:
     sel = (ts.edges().filter_by(GeomType.HYPERBOLA) +
            ts.edges().filter_by(GeomType.BSPLINE))
 
+    # left side
     sel1 = sel.filter_by_position(Axis.Y,
                                   minimum=-ts_inner_dia / 2,
                                   maximum=-handle_dia / 2 - 1.0)
     
+    # right side
     sel2 = sel.filter_by_position(Axis.Y,
                                   minimum=handle_dia / 2 + 1.0,
                                   maximum=ts_inner_dia / 2)
     fillet(sel1, radius=5.4)
-#    fillet(sel2, radius=5.0)
+    # right side doesn't work
+#    fillet(sel2, radius=5.0) 
 
 show(ts, sel2)
