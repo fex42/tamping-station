@@ -1,26 +1,15 @@
-from math import sqrt
-from ocp_vscode import (
-    show,
-    show_object,
-    reset_show,
-    set_port,
-    set_defaults,
-    get_defaults,
-)
-
+from ocp_vscode import show, show_object, reset_show, set_port, set_defaults, get_defaults
 set_port(3939)
 from build123d import *
 
 ts_inner_dia = 75.0
 ts_outer_dia = 85.0
-handle_support_offset = 9.0
+handle_support_offset = 8.0
 ts_height = 75.0
-ear_width = 28.0
-ear_nut_depth = 0.0
 handle_dia = 18.0
 handle_z_offset = 33.0
 
-handle_center_height = ts_height - ear_nut_depth - handle_z_offset + handle_dia / 2
+handle_center_height = ts_height - handle_z_offset + handle_dia / 2
 
 with BuildPart() as ts:
     # main body
@@ -41,20 +30,13 @@ with BuildPart() as ts:
         Circle(ts_inner_dia / 2, mode=Mode.SUBTRACT)
     extrude(amount=ts_height)
 
-    # portafilter wings
-    if ear_nut_depth > 0.0:
-        with BuildSketch(ts.faces().sort_by(Axis.Z)[-1]):
-            Rectangle(ear_width, ts_outer_dia)
-        extrude(amount=-ear_nut_depth, mode=Mode.SUBTRACT)
-
     # chamfer the handle support
     with BuildSketch(Plane.XZ) as hs2_sk:
         with BuildLine():
             top_w = 13.0
             len = 15.0
-            l1 = Line(
-                (ts_outer_dia / 2, ts_height), (ts_outer_dia / 2, ts_height - top_w)
-            )
+            l1 = Line((ts_outer_dia / 2, ts_height), 
+                      (ts_outer_dia / 2, ts_height - top_w))
             l2 = JernArc(l1 @ 1, l1 % 1, r, arc_size=45)
             l3 = PolarLine(l2 @ 1, len, -45.0)
             l4 = Line(l3 @ 1, ((l3 @ 1).X, ts_height))
@@ -63,43 +45,22 @@ with BuildPart() as ts:
     revolve(axis=Axis.Z, mode=Mode.SUBTRACT)
 
     # slot for the handle
-    if True:
-        with BuildSketch(Plane.YZ):
-            with Locations((0, handle_center_height)):
-                Circle(handle_dia / 2)
-                Rectangle(handle_dia, ts_height, align=(Align.CENTER, Align.MIN))
-        extrude(amount=ts_outer_dia, mode=Mode.SUBTRACT)
+    with BuildSketch(Plane.YZ):
+        with Locations((0, handle_center_height)):
+            Circle(handle_dia / 2)
+            Rectangle(handle_dia, ts_height, align=(Align.CENTER, Align.MIN))
+    extrude(amount=ts_outer_dia, mode=Mode.SUBTRACT)
 
-    sel = ts.edges().filter_by(GeomType.HYPERBOLA) + ts.edges().filter_by(
-        GeomType.BSPLINE
-    )
-    sel1 = sel.filter_by_position(
-        Axis.Y, minimum=-ts_inner_dia / 2, maximum=-handle_dia / 2 - 1.0
-    ) + sel.filter_by_position(
-        Axis.Y, minimum=handle_dia / 2 + 0.1, maximum=ts_inner_dia / 2
-    )
-    fillet(sel1, radius=4.7)
+    sel = ts.edges().filter_by(GeomType.HYPERBOLA) + ts.edges().filter_by(GeomType.BSPLINE)
 
-    sel2 = (
-        ts.edges()
-        .filter_by_position(Axis.Y, minimum=-handle_dia / 2, maximum=handle_dia / 2)
-        .filter_by_position(Axis.Z, minimum=ts_height / 2, maximum=ts_height-1)
-    )
-    fillet(sel2, radius=1.3)
+    sel1 = sel.filter_by_position(Axis.Y,
+                                  minimum=-ts_inner_dia / 2,
+                                  maximum=-handle_dia / 2 - 1.0)
+    
+    sel2 = sel.filter_by_position(Axis.Y,
+                                  minimum=handle_dia / 2 + 1.0,
+                                  maximum=ts_inner_dia / 2)
+    fillet(sel1, radius=5.4)
+#    fillet(sel2, radius=5.0)
 
-    sel3 = (
-        ts.edges()
-        .filter_by_position(Axis.Z, minimum=ts_height, maximum=ts_height)
-    )
-    fillet(sel3, radius=1.0)
-
-    sel4 = (
-        ts.edges()
-        .filter_by_position(Axis.Z, minimum=0, maximum=0)
-    )
-    chamfer(sel4, length=0.6)
-
-show(ts)
-
-ts.part.export_step("tamping-station.step")
-ts.part.export_stl("tamping-station.stl")
+show(ts, sel2)
