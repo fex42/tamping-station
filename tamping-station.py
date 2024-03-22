@@ -79,8 +79,10 @@ with BuildPart() as bump:
     # symmetrical right side fillet doesn't work
     fillet(sel2, radius=10.0) 
 
-with BuildPart() as both:
+with BuildPart() as tamping_stand:
     add(bump)
     add(body)
 
-show(both)
+show(tamping_stand)
+
+tamping_stand.part.export_step("tamping-stand.step")
